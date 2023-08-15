@@ -2,7 +2,6 @@ package io.github.spitmaster.zdelayed.core;
 
 import org.aopalliance.intercept.MethodInvocation;
 
-import javax.annotation.Nonnull;
 import java.time.Duration;
 import java.util.concurrent.Future;
 
@@ -19,6 +18,6 @@ public interface DelayTaskExecutor {
      * @return 返回值, Future
      * @throws Throwable 异常
      */
-    Future scheduleTask(@Nonnull MethodInvocation methodInvocation, Duration delayTime) throws Throwable;
+    Future scheduleTask(MethodInvocation methodInvocation, Duration delayTime) throws Throwable;
 
 }

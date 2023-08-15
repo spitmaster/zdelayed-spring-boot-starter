@@ -3,7 +3,6 @@ package io.github.spitmaster.zdelayed.core;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.util.ReflectionUtils;
 
-import javax.annotation.Nonnull;
 import java.time.Duration;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
@@ -22,7 +21,7 @@ public class StandaloneDelayTaskExecutor implements DelayTaskExecutor {
     }
 
     @Override
-    public Future scheduleTask(@Nonnull MethodInvocation methodInvocation, Duration delayTime) throws Throwable {
+    public Future scheduleTask(MethodInvocation methodInvocation, Duration delayTime) throws Throwable {
         Callable<Object> task = () -> {
             try {
                 Object result = methodInvocation.proceed();

@@ -9,8 +9,6 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.concurrent.Future;
@@ -37,9 +35,8 @@ public class ZdelayedMethodInterceptor implements MethodInterceptor {
     private final MQDelayTaskExecutor mqDelayTaskExecutor;
     private final DelayTimeResolver delayTimeResolver;
 
-    @Nullable
     @Override
-    public Object invoke(@Nonnull MethodInvocation methodInvocation) throws Throwable {
+    public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         Method method = methodInvocation.getMethod();
         //1. 检查是否是延时任务
         Zdelayed zdelayed = AnnotatedElementUtils.findMergedAnnotation(method, Zdelayed.class);

@@ -1,6 +1,5 @@
 package io.github.spitmaster.zdelayed.aspect;
 
-import com.google.common.primitives.Primitives;
 import io.github.spitmaster.zdelayed.annotation.DelayTime;
 import io.github.spitmaster.zdelayed.exceptions.ZdelayedException;
 import org.aopalliance.intercept.MethodInvocation;
@@ -40,11 +39,12 @@ public class DelayTimeResolver {
             int paramIndex = delayTimeParameterInfo.paramIndex;
             DelayTime delayTime = delayTimeParameterInfo.delayTime;
             Object delayTimeArg = args[paramIndex];
+            Class<?> delayTimeArgClass = delayTimeArg.getClass();
             if (delayTimeArg instanceof Duration) {
                 return (Duration) delayTimeArg;
             } else if (delayTimeArg instanceof Number) {
                 return Duration.of(((Number) delayTimeArg).longValue(), delayTime.timeunit());
-            } else if (Primitives.allPrimitiveTypes().contains(delayTimeArg.getClass())) {
+            } else if (delayTimeArgClass.isPrimitive()) {
                 //基础类型, 可能走不到这里, 基础类型可能会被转成包装类型
                 return Duration.of((long) delayTimeArg, delayTime.timeunit());
             }
@@ -102,8 +102,6 @@ public class DelayTimeResolver {
         Object[] a = new Object[]{1, 1.2, 3.0f, "2"};
         System.out.println(a[1]);
         System.out.println(a[1].getClass()); //这里会变成包装类型
-        if (Primitives.allPrimitiveTypes().contains(a[1].getClass())) {
-            System.out.println(a[1]);
-        }
+        System.out.println(a[1].getClass().isPrimitive()); //这里会变成包装类型
     }
 }
