@@ -63,14 +63,14 @@ public class ZdelayedMethodInterceptor implements MethodInterceptor {
                 } else {
                     return null;
                 }
-            case REDIS_CLUSTER:
-                //分布式场景下的延时任务, Future返回值没有意义, 直接返回null
-                redisClusterDelayTaskExecutor.scheduleTask(methodInvocation, delayTime);
-                return null;
-            case MQ:
-                //分布式场景下的延时任务, Future返回值没有意义, 直接返回null
-                mqDelayTaskExecutor.scheduleTask(methodInvocation, delayTime);
-                return null;
+//            case REDIS_CLUSTER:
+//                //分布式场景下的延时任务, Future返回值没有意义, 直接返回null
+//                redisClusterDelayTaskExecutor.scheduleTask(methodInvocation, delayTime);
+//                return null;
+//            case MQ:
+//                //分布式场景下的延时任务, Future返回值没有意义, 直接返回null
+//                mqDelayTaskExecutor.scheduleTask(methodInvocation, delayTime);
+//                return null;
         }
         //没有
         return methodInvocation.proceed();
