@@ -9,8 +9,6 @@ import java.lang.annotation.Target;
 /**
  * 标记方法参数, 用于告诉延时任务的延迟时间多长
  * ---
- * 可用于 java.time.Instant 类型的参数上, 用于指定执行时间
- * ---
  * 可用于 java.time.Duration 类型的参数上, 用于表示延迟时长
  * ---
  * 也可用于 java.lang.Number 类型的参数上, 一律当做毫秒表示延迟时长进行处理
@@ -21,6 +19,7 @@ import java.lang.annotation.Target;
  * @see java.time.Instant
  * @see java.lang.Number
  * @see java.time.Duration
+ * @author zhouyijin
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
