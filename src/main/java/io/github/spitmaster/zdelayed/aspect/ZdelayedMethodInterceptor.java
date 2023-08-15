@@ -13,6 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.util.concurrent.Future;
 
 /**
  * 切面的执行
@@ -51,11 +52,17 @@ public class ZdelayedMethodInterceptor implements MethodInterceptor {
             //没有延迟时间, 则不当做延时任务执行
             return methodInvocation.proceed();
         }
+        Class<?> returnType = methodInvocation.getMethod().getReturnType();
         //3. 找到对应的延时任务执行器进行执行
         DelayedTaskScope delayedTaskScope = zdelayed.taskScope();
         switch (delayedTaskScope) {
             case STANDALONE:
-                return standaloneDelayTaskExecutor.scheduleTask(methodInvocation, delayTime);
+                Future scheduledFuture = standaloneDelayTaskExecutor.scheduleTask(methodInvocation, delayTime);
+                if (Future.class.isAssignableFrom(returnType)) {
+                    return scheduledFuture;
+                } else {
+                    return null;
+                }
             case REDIS_CLUSTER:
                 //分布式场景下的延时任务, Future返回值没有意义, 直接返回null
                 redisClusterDelayTaskExecutor.scheduleTask(methodInvocation, delayTime);

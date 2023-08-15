@@ -1,9 +1,12 @@
 package io.github.spitmaster.zdelayed.core;
 
 import org.aopalliance.intercept.MethodInvocation;
+import org.springframework.util.ReflectionUtils;
 
 import javax.annotation.Nonnull;
 import java.time.Duration;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -19,13 +22,20 @@ public class StandaloneDelayTaskExecutor implements DelayTaskExecutor {
     }
 
     @Override
-    public Object scheduleTask(@Nonnull MethodInvocation methodInvocation, Duration delayTime) throws Throwable {
-        return scheduledExecutorService.schedule(() -> {
+    public Future scheduleTask(@Nonnull MethodInvocation methodInvocation, Duration delayTime) throws Throwable {
+        Callable<Object> task = () -> {
             try {
-                return methodInvocation.proceed();
-            } catch (Throwable th) {
-                throw new Exception(th);
+                Object result = methodInvocation.proceed();
+                if (result instanceof Future) {
+                    //@Zdelayed 注解标记的方实现法如果返回值是Future, 这里要解包不然 scheduledExecutorService 还会再包装一层
+                    return ((Future<?>) result).get();
+                }
+            } catch (Throwable ex) {
+                ReflectionUtils.rethrowException(ex);
             }
-        }, delayTime.toMillis(), TimeUnit.MILLISECONDS);
+            return null;
+        };
+        return scheduledExecutorService.schedule(task, delayTime.toMillis(), TimeUnit.MILLISECONDS);
     }
+
 }
