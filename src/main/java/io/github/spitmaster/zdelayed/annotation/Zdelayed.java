@@ -8,12 +8,14 @@ import java.lang.annotation.Target;
 /**
  * 依赖于Spring框架
  * 标记该注解的方法, 会延迟执行
+ * 被标记的方法, 只能返回Future类型的对象, 或者void
  * ---
  * 配合 io.github.spitmaster.zdelayed.annotation.DelayTime 使用
  * 使用 @DelayTime 标记在方法的参数上用于表示延时多长时间进行执行
  * 如果没有 @DelayTime 则不当做延时任务处理
  *
  * @see DelayTime
+ * @author zhouyijin
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
