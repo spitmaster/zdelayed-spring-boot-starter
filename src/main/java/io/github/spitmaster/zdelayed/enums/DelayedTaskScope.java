@@ -12,11 +12,11 @@ public enum DelayedTaskScope {
      */
     STANDALONE,
 
-//    /**
-//     * 在使用同一个redis集群的延时任务的服务之间传递任务
-//     */
-//    REDIS_CLUSTER,
-//
+    /**
+     * 在使用同一个redis集群的延时任务的服务之间传递任务
+     */
+    REDIS_CLUSTER,
+
 //    /**
 //     * 通过MQ的方式传递任务
 //     * not implemented

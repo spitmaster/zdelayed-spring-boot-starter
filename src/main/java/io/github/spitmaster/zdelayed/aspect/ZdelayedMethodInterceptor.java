@@ -5,6 +5,7 @@ import io.github.spitmaster.zdelayed.core.MQDelayTaskExecutor;
 import io.github.spitmaster.zdelayed.core.RedisClusterDelayTaskExecutor;
 import io.github.spitmaster.zdelayed.core.StandaloneDelayTaskExecutor;
 import io.github.spitmaster.zdelayed.enums.DelayedTaskScope;
+import io.github.spitmaster.zdelayed.exceptions.ZdelayedException;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -60,10 +61,16 @@ public class ZdelayedMethodInterceptor implements MethodInterceptor {
                 } else {
                     return null;
                 }
-//            case REDIS_CLUSTER:
-//                //分布式场景下的延时任务, Future返回值没有意义, 直接返回null
-//                redisClusterDelayTaskExecutor.scheduleTask(methodInvocation, delayTime);
-//                return null;
+            case REDIS_CLUSTER:
+                if (redisClusterDelayTaskExecutor == null) {
+                    throw new ZdelayedException("cannot use zdelayed without redisson");
+                }
+                if (returnType != Void.class && returnType != void.class) {
+                    throw new ZdelayedException("The method return type must be void while taskScope is \"REDIS_CLUSTER\"");
+                }
+                redisClusterDelayTaskExecutor.scheduleTask(methodInvocation, delayTime);
+                //分布式场景下的延时任务, Future返回值没有意义, 直接返回null
+                return null;
 //            case MQ:
 //                //分布式场景下的延时任务, Future返回值没有意义, 直接返回null
 //                mqDelayTaskExecutor.scheduleTask(methodInvocation, delayTime);

@@ -6,7 +6,10 @@ import io.github.spitmaster.zdelayed.aspect.ZdelayedMethodInterceptor;
 import io.github.spitmaster.zdelayed.core.MQDelayTaskExecutor;
 import io.github.spitmaster.zdelayed.core.RedisClusterDelayTaskExecutor;
 import io.github.spitmaster.zdelayed.core.StandaloneDelayTaskExecutor;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -42,13 +45,15 @@ public class ZdelayedAutoConfiguration {
     }
 
     @Bean
-    public StandaloneDelayTaskExecutor standaloneDelayTaskExecutor(@Qualifier(ZDELAYED_SCHEDULED_EXECUTOR_BEAN_NAME) ScheduledExecutorService zdelayedScheduledExecutorService) {
+    public StandaloneDelayTaskExecutor standaloneDelayTaskExecutor(
+            @Qualifier(ZDELAYED_SCHEDULED_EXECUTOR_BEAN_NAME) ScheduledExecutorService zdelayedScheduledExecutorService) {
         return new StandaloneDelayTaskExecutor(zdelayedScheduledExecutorService);
     }
 
     @Bean
-    public RedisClusterDelayTaskExecutor redisClusterDelayTaskExecutor() {
-        return new RedisClusterDelayTaskExecutor();
+    @ConditionalOnBean(RedissonClient.class) //没有使用redisson的情况下不加载
+    public RedisClusterDelayTaskExecutor redisClusterDelayTaskExecutor(RedissonClient redissonClient) {
+        return new RedisClusterDelayTaskExecutor(redissonClient);
     }
 
     @Bean
@@ -59,8 +64,8 @@ public class ZdelayedAutoConfiguration {
     @Bean
     public ZdelayedMethodInterceptor zdelayedMethodInterceptor(
             StandaloneDelayTaskExecutor standaloneDelayTaskExecutor,
-            RedisClusterDelayTaskExecutor redisClusterDelayTaskExecutor,
-            MQDelayTaskExecutor mqDelayTaskExecutor,
+            @Autowired(required = false) RedisClusterDelayTaskExecutor redisClusterDelayTaskExecutor,
+            @Autowired(required = false) MQDelayTaskExecutor mqDelayTaskExecutor,
             DelayTimeResolver delayTimeResolver) {
         return new ZdelayedMethodInterceptor(standaloneDelayTaskExecutor, redisClusterDelayTaskExecutor, mqDelayTaskExecutor, delayTimeResolver);
     }
