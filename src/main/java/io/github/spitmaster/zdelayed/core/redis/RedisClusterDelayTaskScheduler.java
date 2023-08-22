@@ -6,8 +6,6 @@ import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RDelayedQueue;
 import org.redisson.api.RedissonClient;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.time.Duration;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -36,13 +34,4 @@ public class RedisClusterDelayTaskScheduler implements DelayTaskExecutor {
         return delayedTask;
     }
 
-
-    public static void main(String[] args) throws NoSuchMethodException {
-        Method method = RedisClusterDelayTaskScheduler.class.getMethod("queueName", MethodInvocation.class);
-        Class<?> declaringClass = method.getDeclaringClass();
-//        System.out.println(declaringClass);
-        for (Parameter parameter : method.getParameters()) {
-            System.out.println(parameter.getType().getName());
-        }
-    }
 }
