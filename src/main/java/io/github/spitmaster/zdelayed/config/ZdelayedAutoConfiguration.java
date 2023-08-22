@@ -5,8 +5,9 @@ import io.github.spitmaster.zdelayed.aspect.DelayTimeResolver;
 import io.github.spitmaster.zdelayed.aspect.ZdelayedAnnotationAdvisor;
 import io.github.spitmaster.zdelayed.aspect.ZdelayedMethodInterceptor;
 import io.github.spitmaster.zdelayed.core.MQDelayTaskExecutor;
-import io.github.spitmaster.zdelayed.core.StandaloneDelayTaskExecutor;
+import io.github.spitmaster.zdelayed.core.redis.RedisClusterDelayTaskExecutor;
 import io.github.spitmaster.zdelayed.core.redis.RedisClusterDelayTaskScheduler;
+import io.github.spitmaster.zdelayed.core.standalone.StandaloneDelayTaskExecutor;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -84,6 +85,15 @@ public class ZdelayedAutoConfiguration {
     public RedisClusterDelayTaskScheduler redisClusterDelayTaskExecutor(
             RedissonClient redissonClient) {
         return new RedisClusterDelayTaskScheduler(redissonClient);
+    }
+
+    @Bean
+    @ConditionalOnBean(RedissonClient.class) //没有使用redisson的情况下不加载
+    public RedisClusterDelayTaskExecutor redisClusterDelayTaskExecutor(
+            RedissonClient redissonClient,
+            @Qualifier(ZDELAYED_EXECUTOR) ExecutorService zdelayedExecutor
+    ) {
+        return new RedisClusterDelayTaskExecutor(redissonClient, zdelayedExecutor);
     }
 
     @Bean

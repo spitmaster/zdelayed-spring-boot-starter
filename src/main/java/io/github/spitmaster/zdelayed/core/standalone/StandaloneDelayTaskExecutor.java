@@ -1,5 +1,6 @@
-package io.github.spitmaster.zdelayed.core;
+package io.github.spitmaster.zdelayed.core.standalone;
 
+import io.github.spitmaster.zdelayed.core.DelayTaskExecutor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.util.ReflectionUtils;
 

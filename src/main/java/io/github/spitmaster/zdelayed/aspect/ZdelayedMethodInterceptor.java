@@ -3,7 +3,7 @@ package io.github.spitmaster.zdelayed.aspect;
 import io.github.spitmaster.zdelayed.annotation.Zdelayed;
 import io.github.spitmaster.zdelayed.core.MQDelayTaskExecutor;
 import io.github.spitmaster.zdelayed.core.redis.RedisClusterDelayTaskScheduler;
-import io.github.spitmaster.zdelayed.core.StandaloneDelayTaskExecutor;
+import io.github.spitmaster.zdelayed.core.standalone.StandaloneDelayTaskExecutor;
 import io.github.spitmaster.zdelayed.enums.DelayedTaskScope;
 import io.github.spitmaster.zdelayed.exceptions.ZdelayedException;
 import org.aopalliance.intercept.MethodInterceptor;
