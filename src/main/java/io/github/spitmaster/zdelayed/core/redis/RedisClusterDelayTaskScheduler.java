@@ -22,7 +22,7 @@ public class RedisClusterDelayTaskScheduler implements DelayTaskExecutor {
 
     @Override
     public Future scheduleTask(MethodInvocation methodInvocation, Duration delayTime) throws Throwable {
-        String queueName = this.queueName(methodInvocation);
+        String queueName = DelayQueueNameProvider.queueName(methodInvocation.getMethod());
         RBlockingQueue blockingQueue = redissonClient.getBlockingQueue(queueName);
         RDelayedQueue delayedQueue = redissonClient.getDelayedQueue(blockingQueue);
         delayedQueue.offer(getDelayTask(methodInvocation), delayTime.toMillis(), TimeUnit.MILLISECONDS);
@@ -36,23 +36,6 @@ public class RedisClusterDelayTaskScheduler implements DelayTaskExecutor {
         return delayedTask;
     }
 
-    //未来可以加缓存
-    public String queueName(MethodInvocation methodInvocation) {
-        Method method = methodInvocation.getMethod();
-        Class<?> declaringClass = method.getDeclaringClass(); //method所在的class
-        Parameter[] parameters = method.getParameters(); //method的参数
-        StringBuilder sb = new StringBuilder();
-        sb.append(declaringClass.getName());
-        sb.append(":");
-        sb.append(method.getName());
-        if (parameters != null) {
-            for (Parameter parameter : parameters) {
-                sb.append(":");
-                sb.append(parameter.getType().getTypeName());
-            }
-        }
-        return sb.toString();
-    }
 
     public static void main(String[] args) throws NoSuchMethodException {
         Method method = RedisClusterDelayTaskScheduler.class.getMethod("queueName", MethodInvocation.class);
