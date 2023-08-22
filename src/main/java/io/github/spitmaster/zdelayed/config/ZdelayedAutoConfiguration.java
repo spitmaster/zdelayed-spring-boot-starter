@@ -5,8 +5,8 @@ import io.github.spitmaster.zdelayed.aspect.DelayTimeResolver;
 import io.github.spitmaster.zdelayed.aspect.ZdelayedAnnotationAdvisor;
 import io.github.spitmaster.zdelayed.aspect.ZdelayedMethodInterceptor;
 import io.github.spitmaster.zdelayed.core.MQDelayTaskExecutor;
-import io.github.spitmaster.zdelayed.core.RedisClusterDelayTaskExecutor;
 import io.github.spitmaster.zdelayed.core.StandaloneDelayTaskExecutor;
+import io.github.spitmaster.zdelayed.core.redis.RedisClusterDelayTaskScheduler;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -81,8 +81,9 @@ public class ZdelayedAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(RedissonClient.class) //没有使用redisson的情况下不加载
-    public RedisClusterDelayTaskExecutor redisClusterDelayTaskExecutor(RedissonClient redissonClient) {
-        return new RedisClusterDelayTaskExecutor(redissonClient);
+    public RedisClusterDelayTaskScheduler redisClusterDelayTaskExecutor(
+            RedissonClient redissonClient) {
+        return new RedisClusterDelayTaskScheduler(redissonClient);
     }
 
     @Bean
@@ -93,7 +94,7 @@ public class ZdelayedAutoConfiguration {
     @Bean
     public ZdelayedMethodInterceptor zdelayedMethodInterceptor(
             StandaloneDelayTaskExecutor standaloneDelayTaskExecutor,
-            @Autowired(required = false) RedisClusterDelayTaskExecutor redisClusterDelayTaskExecutor,
+            @Autowired(required = false) RedisClusterDelayTaskScheduler redisClusterDelayTaskExecutor,
             @Autowired(required = false) MQDelayTaskExecutor mqDelayTaskExecutor,
             DelayTimeResolver delayTimeResolver) {
         return new ZdelayedMethodInterceptor(standaloneDelayTaskExecutor, redisClusterDelayTaskExecutor, mqDelayTaskExecutor, delayTimeResolver);

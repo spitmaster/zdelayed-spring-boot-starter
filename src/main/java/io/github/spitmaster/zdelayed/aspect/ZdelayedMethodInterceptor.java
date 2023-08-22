@@ -2,7 +2,7 @@ package io.github.spitmaster.zdelayed.aspect;
 
 import io.github.spitmaster.zdelayed.annotation.Zdelayed;
 import io.github.spitmaster.zdelayed.core.MQDelayTaskExecutor;
-import io.github.spitmaster.zdelayed.core.RedisClusterDelayTaskExecutor;
+import io.github.spitmaster.zdelayed.core.redis.RedisClusterDelayTaskScheduler;
 import io.github.spitmaster.zdelayed.core.StandaloneDelayTaskExecutor;
 import io.github.spitmaster.zdelayed.enums.DelayedTaskScope;
 import io.github.spitmaster.zdelayed.exceptions.ZdelayedException;
@@ -22,7 +22,7 @@ import java.util.concurrent.Future;
 public class ZdelayedMethodInterceptor implements MethodInterceptor {
 
     public ZdelayedMethodInterceptor(StandaloneDelayTaskExecutor standaloneDelayTaskExecutor,
-                                     RedisClusterDelayTaskExecutor redisClusterDelayTaskExecutor,
+                                     RedisClusterDelayTaskScheduler redisClusterDelayTaskExecutor,
                                      MQDelayTaskExecutor mqDelayTaskExecutor,
                                      DelayTimeResolver delayTimeResolver) {
         this.standaloneDelayTaskExecutor = standaloneDelayTaskExecutor;
@@ -32,7 +32,7 @@ public class ZdelayedMethodInterceptor implements MethodInterceptor {
     }
 
     private final StandaloneDelayTaskExecutor standaloneDelayTaskExecutor;
-    private final RedisClusterDelayTaskExecutor redisClusterDelayTaskExecutor;
+    private final RedisClusterDelayTaskScheduler redisClusterDelayTaskExecutor;
     private final MQDelayTaskExecutor mqDelayTaskExecutor;
     private final DelayTimeResolver delayTimeResolver;
 
