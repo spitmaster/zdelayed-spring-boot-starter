@@ -14,6 +14,8 @@ public enum DelayedTaskScope {
 
     /**
      * 在使用同一个redis集群的延时任务的服务之间传递任务
+     * 使用有限制条件, 使用同一个redis实例的服务必须是同一套代码
+     * 不然其他服务消费到延时任务, 没有这个method就无法执行
      */
     REDIS_CLUSTER,
 
