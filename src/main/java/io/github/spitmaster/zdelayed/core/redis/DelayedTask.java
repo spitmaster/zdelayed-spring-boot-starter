@@ -1,31 +1,55 @@
 package io.github.spitmaster.zdelayed.core.redis;
 
-import java.lang.reflect.Method;
-
 /**
  * 延迟任务的信息
+ * methodClass + methodName + parameterTypes 可以确定唯一的方法
  *
  * @author zhouyijin
  */
 public class DelayedTask {
 
     /**
-     * 延时方法
+     * 方法所在的class
      */
-    private Method method;
+    private String methodClass;
+
+    /**
+     * 方法名
+     */
+    private String methodName;
+
+    /**
+     * 方法的参数类型
+     */
+    private String[] parameterTypes;
 
     /**
      * 延时方法的参数
      */
     private Object[] args;
 
-
-    public Method getMethod() {
-        return method;
+    public String getMethodClass() {
+        return methodClass;
     }
 
-    public void setMethod(Method method) {
-        this.method = method;
+    public void setMethodClass(String methodClass) {
+        this.methodClass = methodClass;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public String[] getParameterTypes() {
+        return parameterTypes;
+    }
+
+    public void setParameterTypes(String[] parameterTypes) {
+        this.parameterTypes = parameterTypes;
     }
 
     public Object[] getArgs() {
