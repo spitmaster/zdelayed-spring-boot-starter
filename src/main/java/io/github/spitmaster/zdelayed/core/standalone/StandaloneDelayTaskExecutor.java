@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 单机执行延时任务的executor
+ *
+ * @author zhouyijin
  */
 public class StandaloneDelayTaskExecutor implements DelayTaskExecutor {
 

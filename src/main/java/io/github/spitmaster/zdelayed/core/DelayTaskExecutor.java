@@ -7,6 +7,8 @@ import java.util.concurrent.Future;
 
 /**
  * 真正执行延时任务的执行器
+ *
+ * @author zhouyijin
  */
 public interface DelayTaskExecutor {
 
