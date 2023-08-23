@@ -86,6 +86,7 @@ public class RedisClusterDelayTaskExecutor implements BeanFactoryAware, Initiali
                 //1. 找到method和spring环境下的bean
                 MethodBean methodBean = getMethodBean(delayedTask);
                 //2. 通过反射执行方法调用
+                // TODO: 2023/8/23 这里的调用会造成递归循环 , 一直在延时队列中转
                 methodBean.invoke(delayedTask.getArgs());
             } catch (Exception e) {
                 LOGGER.info("RedisClusterDelayTaskExecutor execute task failed; delayedTask={}", delayedTask, e);
