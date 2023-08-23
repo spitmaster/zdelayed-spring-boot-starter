@@ -5,6 +5,7 @@ import org.aopalliance.aop.Advice;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.support.AbstractPointcutAdvisor;
 import org.springframework.aop.support.annotation.AnnotationMatchingPointcut;
+import org.springframework.core.Ordered;
 
 /**
  * 定义@Zdelayed需要使用的Pointcut和Advice
@@ -29,5 +30,10 @@ public class ZdelayedAnnotationAdvisor extends AbstractPointcutAdvisor {
     @Override
     public Advice getAdvice() {
         return advice;
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
     }
 }
