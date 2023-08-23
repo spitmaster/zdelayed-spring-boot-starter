@@ -33,6 +33,11 @@ public class RedisClusterDelayTaskScheduler implements DelayTaskExecutor {
 
     @Override
     public Future scheduleTask(MethodInvocation methodInvocation, Duration delayTime) throws Throwable {
+        if (DelayedTaskChecker.isFromDelayedTask()) {
+            //如果已经是来自于延时任务的调用了, 则直接执行
+            methodInvocation.proceed();
+            return null;
+        }
         RBlockingQueue<DelayedTask> blockingQueue = redissonClient.getBlockingQueue(ZDELAYED_QUEUE_NAME, DELAY_TASK_CODEC);
         RDelayedQueue<DelayedTask> delayedQueue = redissonClient.getDelayedQueue(blockingQueue);
         delayedQueue.offer(this.getDelayTask(methodInvocation), delayTime.toMillis(), TimeUnit.MILLISECONDS);

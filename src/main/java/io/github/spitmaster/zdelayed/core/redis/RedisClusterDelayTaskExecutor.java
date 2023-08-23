@@ -10,8 +10,6 @@ import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -83,61 +81,19 @@ public class RedisClusterDelayTaskExecutor implements BeanFactoryAware, Initiali
     private void executeDelayedTask(DelayedTask delayedTask) {
         zdelayedExecutor.execute(() -> {
             try {
-                //1. 找到method和spring环境下的bean
-                MethodBean methodBean = getMethodBean(delayedTask);
-                //2. 通过反射执行方法调用
-                // TODO: 2023/8/23 这里的调用会造成递归循环 , 一直在延时队列中转
-                methodBean.invoke(delayedTask.getArgs());
+                //1. 标记该任务是来资源延时任务触发的, 这样Scheduler不会再将任务放入延时队列中, 而是直接执行
+                DelayedTaskChecker.markFromDelayedTask();
+                //2. 找到method和spring环境下的bean
+                DelayedTaskInvoker delayedTaskInvoker = DelayedTaskInvoker.from(delayedTask, beanFactory);
+                //3. 通过反射执行方法调用
+                delayedTaskInvoker.invoke();
             } catch (Exception e) {
                 LOGGER.info("RedisClusterDelayTaskExecutor execute task failed; delayedTask={}", delayedTask, e);
+            } finally {
+                //4. 执行结束, 清除标识, 以便下一次调用能识别出是不是来资源延时任务
+                DelayedTaskChecker.clearMark();
             }
         });
-    }
-
-    private MethodBean getMethodBean(DelayedTask delayedTask) throws ClassNotFoundException, NoSuchMethodException {
-        String methodClass = delayedTask.getMethodClass();
-        String methodName = delayedTask.getMethodName();
-        String[] parameterTypes = delayedTask.getParameterTypes();
-
-        Class<?> methodClazz = Class.forName(methodClass);
-        Object bean = beanFactory.getBean(methodClazz);
-        Class[] parameterClasses = null;
-        if (parameterTypes != null) {
-            parameterClasses = new Class[parameterTypes.length];
-            for (int i = 0; i < parameterTypes.length; i++) {
-                parameterClasses[i] = Class.forName(parameterTypes[i]);
-            }
-        }
-        Method method = methodClazz.getMethod(methodName, parameterClasses);
-        MethodBean methodBean = new MethodBean();
-        methodBean.setMethod(method);
-        methodBean.setBean(bean);
-        return methodBean;
-    }
-
-    private static class MethodBean {
-        private Method method;
-        private Object bean;
-
-        public Method getMethod() {
-            return method;
-        }
-
-        public void setMethod(Method method) {
-            this.method = method;
-        }
-
-        public Object getBean() {
-            return bean;
-        }
-
-        public void setBean(Object bean) {
-            this.bean = bean;
-        }
-
-        private void invoke(Object[] args) throws InvocationTargetException, IllegalAccessException {
-            method.invoke(bean, args);
-        }
     }
 
     @Override

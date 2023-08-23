@@ -6,7 +6,7 @@ package io.github.spitmaster.zdelayed.core.redis;
  *
  * @author zhouyijin
  */
-public class DelayedTask {
+class DelayedTask {
 
     /**
      * 方法所在的class
@@ -28,35 +28,35 @@ public class DelayedTask {
      */
     private Object[] args;
 
-    public String getMethodClass() {
+    String getMethodClass() {
         return methodClass;
     }
 
-    public void setMethodClass(String methodClass) {
+    void setMethodClass(String methodClass) {
         this.methodClass = methodClass;
     }
 
-    public String getMethodName() {
+    String getMethodName() {
         return methodName;
     }
 
-    public void setMethodName(String methodName) {
+    void setMethodName(String methodName) {
         this.methodName = methodName;
     }
 
-    public String[] getParameterTypes() {
+    String[] getParameterTypes() {
         return parameterTypes;
     }
 
-    public void setParameterTypes(String[] parameterTypes) {
+    void setParameterTypes(String[] parameterTypes) {
         this.parameterTypes = parameterTypes;
     }
 
-    public Object[] getArgs() {
+    Object[] getArgs() {
         return args;
     }
 
-    public void setArgs(Object[] args) {
+    void setArgs(Object[] args) {
         this.args = args;
     }
 }
