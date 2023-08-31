@@ -43,7 +43,7 @@ public class ZdelayedAutoConfiguration {
      * 你可以自定义名字为 ZDELAYED_SCHEDULER 的 bean 替代这个默认的 scheduledExecutor
      */
     @Bean(ZDELAYED_STANDALONE_SCHEDULER)
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = ZDELAYED_STANDALONE_SCHEDULER)
     public ScheduledExecutorService defaultZdelayedScheduler() {
         ThreadFactory threadFactory = new ThreadFactoryBuilder()
                 .setDaemon(true) //不阻止JVM关闭
@@ -61,7 +61,7 @@ public class ZdelayedAutoConfiguration {
      * 你可以覆盖这个bean
      */
     @Bean(ZDELAYED_CLUSTER_EXECUTOR)
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(name = ZDELAYED_CLUSTER_EXECUTOR)
     public ExecutorService defaultZdelayedExecutor() {
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
                 Runtime.getRuntime().availableProcessors() * 2,
