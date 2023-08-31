@@ -2,10 +2,11 @@ package io.github.spitmaster.zdelayed.core.standalone;
 
 import io.github.spitmaster.zdelayed.core.DelayTaskExecutor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ReflectionUtils;
 
 import java.time.Duration;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -17,36 +18,34 @@ import java.util.concurrent.TimeUnit;
  */
 public class StandaloneDelayTaskExecutor implements DelayTaskExecutor {
 
-    private final ScheduledExecutorService zdelayedScheduler;
-    private final ExecutorService zdelayedExecutor;
+    private static final Logger LOGGER = LoggerFactory.getLogger(StandaloneDelayTaskExecutor.class);
 
-    public StandaloneDelayTaskExecutor(ScheduledExecutorService zdelayedScheduler, ExecutorService zdelayedExecutor) {
+    private final ScheduledExecutorService zdelayedScheduler;
+
+    public StandaloneDelayTaskExecutor(ScheduledExecutorService zdelayedScheduler) {
         this.zdelayedScheduler = zdelayedScheduler;
-        this.zdelayedExecutor = zdelayedExecutor;
     }
 
     @Override
     public Future scheduleTask(MethodInvocation methodInvocation, Duration delayTime) throws Throwable {
-        return zdelayedScheduler.schedule(
-                        () -> this.executeTask(methodInvocation),
-                        delayTime.toMillis(),
-                        TimeUnit.MILLISECONDS)
-                //zdelayedScheduler.schedule() 会再包装一层 Future, 我们需要.get() 才能获取到执行器zdelayedExecutor的Future
-                .get();
-    }
-
-    private Future<Object> executeTask(MethodInvocation methodInvocation) {
-        return zdelayedExecutor.submit(() -> {
-            try {
-                Object result = methodInvocation.proceed();
-                if (result instanceof Future) {
-                    //@Zdelayed 注解标记的方实现法如果返回值是Future, 这里要解包不然 scheduledExecutorService 还会再包装一层
-                    return ((Future<?>) result).get();
-                }
-            } catch (Throwable ex) {
-                ReflectionUtils.rethrowException(ex);
-            }
-            return null;
-        });
+        return zdelayedScheduler.schedule(() -> {
+                    try {
+                        Object result = methodInvocation.proceed();
+                        if (result instanceof Future) {
+                            //@Zdelayed 注解标记的方实现法如果返回值是Future, 这里要解包不然 scheduledExecutorService 还会再包装一层
+                            return ((Future<?>) result).get();
+                        }
+                    } catch (InterruptedException e) {
+                        LOGGER.error("StandaloneDelayTaskExecutor Interrupted", e);
+                        /* Clean up whatever needs to be handled before interrupting  */
+                        Thread.currentThread().interrupt();
+                    } catch (Throwable th) {
+                        LOGGER.error("StandaloneDelayTaskExecutor execute error", th);
+                        ReflectionUtils.rethrowException(th);
+                    }
+                    return null;
+                },
+                delayTime.toMillis(),
+                TimeUnit.MILLISECONDS);
     }
 }

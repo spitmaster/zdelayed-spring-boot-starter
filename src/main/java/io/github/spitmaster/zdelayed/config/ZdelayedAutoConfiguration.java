@@ -28,8 +28,10 @@ import java.util.concurrent.*;
 @ConditionalOnProperty(name = "zdelayed.enabled", matchIfMissing = true)
 public class ZdelayedAutoConfiguration {
 
-    public static final String ZDELAYED_SCHEDULER = "zdelayed-scheduler";
-    public static final String ZDELAYED_EXECUTOR = "zdelayed-executor";
+    //单机延时任务的执行器
+    public static final String ZDELAYED_STANDALONE_SCHEDULER = "zdelayed-standalone-scheduler";
+    //分布式情况下的延时任务的执行器
+    public static final String ZDELAYED_CLUSTER_EXECUTOR = "zdelayed-cluster-executor";
 
     @Bean
     public DelayTimeResolver delayTimeResolver() {
@@ -40,14 +42,17 @@ public class ZdelayedAutoConfiguration {
      * 调度用的线程池, 只需要一个1线程即可
      * 你可以自定义名字为 ZDELAYED_SCHEDULER 的 bean 替代这个默认的 scheduledExecutor
      */
-    @Bean(ZDELAYED_SCHEDULER)
+    @Bean(ZDELAYED_STANDALONE_SCHEDULER)
     @ConditionalOnMissingBean
     public ScheduledExecutorService defaultZdelayedScheduler() {
         ThreadFactory threadFactory = new ThreadFactoryBuilder()
                 .setDaemon(true) //不阻止JVM关闭
                 .setNameFormat("zdelayed-scheduler-%d")
                 .build();
-        return new ScheduledThreadPoolExecutor(1, threadFactory);
+        return new ScheduledThreadPoolExecutor(
+                Runtime.getRuntime().availableProcessors(),
+                threadFactory
+        );
     }
 
     /**
@@ -55,7 +60,7 @@ public class ZdelayedAutoConfiguration {
      * 这里提供一个默认的
      * 你可以覆盖这个bean
      */
-    @Bean(ZDELAYED_EXECUTOR)
+    @Bean(ZDELAYED_CLUSTER_EXECUTOR)
     @ConditionalOnMissingBean
     public ExecutorService defaultZdelayedExecutor() {
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
@@ -75,9 +80,8 @@ public class ZdelayedAutoConfiguration {
 
     @Bean
     public StandaloneDelayTaskExecutor standaloneDelayTaskExecutor(
-            @Qualifier(ZDELAYED_SCHEDULER) ScheduledExecutorService zdelayedScheduler,
-            @Qualifier(ZDELAYED_EXECUTOR) ExecutorService zdelayedExecutor) {
-        return new StandaloneDelayTaskExecutor(zdelayedScheduler, zdelayedExecutor);
+            @Qualifier(ZDELAYED_STANDALONE_SCHEDULER) ScheduledExecutorService zdelayedScheduler) {
+        return new StandaloneDelayTaskExecutor(zdelayedScheduler);
     }
 
     @Bean
@@ -91,7 +95,7 @@ public class ZdelayedAutoConfiguration {
     @ConditionalOnBean(RedissonClient.class) //没有使用redisson的情况下不加载
     public RedisClusterDelayTaskExecutor redisClusterDelayTaskExecutor(
             RedissonClient redissonClient,
-            @Qualifier(ZDELAYED_EXECUTOR) ExecutorService zdelayedExecutor
+            @Qualifier(ZDELAYED_CLUSTER_EXECUTOR) ExecutorService zdelayedExecutor
     ) {
         return new RedisClusterDelayTaskExecutor(redissonClient, zdelayedExecutor);
     }
