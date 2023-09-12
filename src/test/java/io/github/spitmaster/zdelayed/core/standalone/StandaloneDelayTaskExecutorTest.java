@@ -114,4 +114,30 @@ class StandaloneDelayTaskExecutorTest {
         Assertions.assertTrue(elapsed.toMillis() >= 0);
     }
 
+
+    //等待执行结果
+    @Test
+    public void e1() throws ExecutionException, InterruptedException {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Future<Integer> d = standaloneDelayTaskSample.e(Duration.ofSeconds(2000));
+        d.get();
+        Duration elapsed = stopwatch.elapsed();
+        LOGGER.info("e elapsed={}", elapsed);
+        Assertions.assertTrue(elapsed.toMillis() < 3050);
+        Assertions.assertTrue(elapsed.toMillis() >= 3000);
+    }
+
+
+    //不等待执行结果
+    @Test
+    public void e2() {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        standaloneDelayTaskSample.e(Duration.ofSeconds(2000));
+        Duration elapsed = stopwatch.elapsed();
+        LOGGER.info("e elapsed={}", elapsed);
+        Assertions.assertTrue(elapsed.toMillis() < 50);
+        Assertions.assertTrue(elapsed.toMillis() >= 0);
+    }
+
+
 }

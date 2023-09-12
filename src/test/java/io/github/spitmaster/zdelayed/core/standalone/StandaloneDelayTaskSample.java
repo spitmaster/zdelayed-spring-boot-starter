@@ -36,5 +36,12 @@ public class StandaloneDelayTaskSample {
         return AsyncResult.forValue(0);
     }
 
+    //由于设置了fixedDelayTime, 所以直接无视 @DelayTime
+    @Zdelayed(fixedDelayTime = 3)
+    public Future<Integer> e(@DelayTime Duration delayTime) {
+        System.out.println("e");
+        return AsyncResult.forValue(0);
+    }
+
 
 }
