@@ -1,4 +1,4 @@
-package io.github.spitmaster.zdelayed.core.standalone;
+package io.github.spitmaster.zdelayed.standalone.core;
 
 import io.github.spitmaster.zdelayed.annotation.DelayTime;
 import io.github.spitmaster.zdelayed.annotation.Zdelayed;

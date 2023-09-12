@@ -1,5 +1,6 @@
 package io.github.spitmaster.zdelayed.core.redis;
 
+import com.google.common.primitives.Primitives;
 import org.springframework.beans.factory.BeanFactory;
 
 import java.lang.reflect.InvocationTargetException;
@@ -42,7 +43,12 @@ class DelayedTaskInvoker {
         if (parameterTypes != null) {
             parameterClasses = new Class[parameterTypes.length];
             for (int i = 0; i < parameterTypes.length; i++) {
-                parameterClasses[i] = Class.forName(parameterTypes[i]);
+                String parameterTypeName = parameterTypes[i];
+                Class<?> parameterType = matchPrimitiveType(parameterTypeName); //先看看这个参数的类型是不是基础类型
+                if (parameterType == null) {
+                    parameterType = Class.forName(parameterTypeName);
+                }
+                parameterClasses[i] = parameterType;
             }
         }
         Method method = methodClazz.getMethod(methodName, parameterClasses);
@@ -53,10 +59,24 @@ class DelayedTaskInvoker {
         return methodBean;
     }
 
+    private static Class<?> matchPrimitiveType(String parameterTypeName) {
+        for (Class<?> primitiveType : Primitives.allPrimitiveTypes()) {
+            if (primitiveType.getName().equals(parameterTypeName)) {
+                return primitiveType;
+            }
+        }
+        return null;
+    }
+
     /**
      * 调用业务方法
      */
     void invoke() throws InvocationTargetException, IllegalAccessException {
         method.invoke(bean, args);
+    }
+
+    public static void main(String[] args) {
+//        String a = "long";
+//        PrimitiveIterator
     }
 }

@@ -1,5 +1,6 @@
 package io.github.spitmaster.zdelayed.core.redis;
 
+import com.alibaba.fastjson.JSON;
 import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
@@ -53,7 +54,7 @@ public class RedisClusterDelayTaskExecutor implements BeanFactoryAware, Initiali
 
     @Override
     public void run() {
-        RBlockingQueue<DelayedTask> delayedTaskRBlockingQueue = redissonClient.getBlockingQueue(
+        RBlockingQueue<String> delayedTaskRBlockingQueue = redissonClient.getBlockingQueue(
                 RedisClusterDelayTaskScheduler.ZDELAYED_QUEUE_NAME,
                 RedisClusterDelayTaskScheduler.DELAY_TASK_CODEC
         );
@@ -63,7 +64,8 @@ public class RedisClusterDelayTaskExecutor implements BeanFactoryAware, Initiali
             }
             DelayedTask delayedTask = null;
             try {
-                delayedTask = delayedTaskRBlockingQueue.take();
+                String delayedTaskStr = delayedTaskRBlockingQueue.take();
+                delayedTask = JSON.parseObject(delayedTaskStr, DelayedTask.class);
             } catch (InterruptedException e) {
                 LOGGER.info("RedisClusterDelayTaskExecutor get delayed task failed", e);
                 Thread.currentThread().interrupt();

@@ -1,7 +1,7 @@
-package io.github.spitmaster.zdelayed.core.standalone;
+package io.github.spitmaster.zdelayed.standalone.core;
 
 import com.google.common.base.Stopwatch;
-import io.github.spitmaster.zdelayed.TestApplication;
+import io.github.spitmaster.zdelayed.standalone.TestApplication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

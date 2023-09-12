@@ -1,11 +1,13 @@
 package io.github.spitmaster.zdelayed.core.redis;
 
+import com.alibaba.fastjson.JSON;
 import io.github.spitmaster.zdelayed.core.DelayTaskExecutor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RDelayedQueue;
 import org.redisson.api.RedissonClient;
-import org.redisson.codec.TypedJsonJacksonCodec;
+import org.redisson.client.codec.Codec;
+import org.redisson.client.codec.StringCodec;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -23,7 +25,8 @@ public class RedisClusterDelayTaskScheduler implements DelayTaskExecutor {
     //延时队列的名字
     static final String ZDELAYED_QUEUE_NAME = "zdelayed:task";
     //使用jackson序列化 DelayedTask 对象
-    static final TypedJsonJacksonCodec DELAY_TASK_CODEC = new TypedJsonJacksonCodec(DelayedTask.class);
+//    static final TypedJsonJacksonCodec DELAY_TASK_CODEC = new TypedJsonJacksonCodec(DelayedTask.class);
+    static final Codec DELAY_TASK_CODEC = new StringCodec();
 
     private final RedissonClient redissonClient;
 
@@ -38,13 +41,13 @@ public class RedisClusterDelayTaskScheduler implements DelayTaskExecutor {
             methodInvocation.proceed();
             return null;
         }
-        RBlockingQueue<DelayedTask> blockingQueue = redissonClient.getBlockingQueue(ZDELAYED_QUEUE_NAME, DELAY_TASK_CODEC);
-        RDelayedQueue<DelayedTask> delayedQueue = redissonClient.getDelayedQueue(blockingQueue);
+        RBlockingQueue<String> blockingQueue = redissonClient.getBlockingQueue(ZDELAYED_QUEUE_NAME, DELAY_TASK_CODEC);
+        RDelayedQueue<String> delayedQueue = redissonClient.getDelayedQueue(blockingQueue);
         delayedQueue.offer(this.getDelayTask(methodInvocation), delayTime.toMillis(), TimeUnit.MILLISECONDS);
         return null;
     }
 
-    private DelayedTask getDelayTask(MethodInvocation methodInvocation) {
+    private String getDelayTask(MethodInvocation methodInvocation) {
         DelayedTask delayedTask = new DelayedTask();
         //1. 找到需要发送给 redis 延时队列的数据
         Method method = methodInvocation.getMethod();
@@ -62,8 +65,7 @@ public class RedisClusterDelayTaskScheduler implements DelayTaskExecutor {
             delayedTask.setParameterTypes(parameterTypes);
         }
         delayedTask.setArgs(arguments);
-
-        return delayedTask;
+        return JSON.toJSONString(delayedTask);
     }
 
 }
