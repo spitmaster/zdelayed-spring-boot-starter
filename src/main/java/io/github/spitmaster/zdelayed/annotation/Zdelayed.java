@@ -6,6 +6,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.time.temporal.ChronoUnit;
 
 /**
  * 依赖于Spring框架
@@ -28,4 +29,16 @@ public @interface Zdelayed {
      * 默认是本实例去执行延时任务
      */
     DelayedTaskScope taskScope() default DelayedTaskScope.STANDALONE;
+
+    /**
+     * 当这个值大于0的时候, 强制使用这个延迟时间, 无视@DelayTime注解
+     *
+     * @see DelayTime
+     */
+    long fixedDelayTime() default 0;
+
+    /**
+     * fixedDelayTime 使用的时间单位
+     */
+    ChronoUnit timeunit() default ChronoUnit.SECONDS;
 }

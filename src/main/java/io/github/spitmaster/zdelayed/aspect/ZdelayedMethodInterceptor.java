@@ -45,7 +45,7 @@ public class ZdelayedMethodInterceptor implements MethodInterceptor {
             return methodInvocation.proceed();
         }
         //2. 获取延时任务的延时时长
-        Duration delayTime = delayTimeResolver.getDelayTime(methodInvocation);
+        Duration delayTime = delayTimeResolver.getDelayTime(zdelayed, methodInvocation);
         if (delayTime == null) {
             //没有延迟时间, 则不当做延时任务执行
             return methodInvocation.proceed();

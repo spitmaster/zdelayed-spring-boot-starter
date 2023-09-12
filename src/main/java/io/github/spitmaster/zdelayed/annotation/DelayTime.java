@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 import java.time.temporal.ChronoUnit;
 
 /**
- * 标记方法参数, 用于告诉延时任务的延迟时间多长
+ * 标记方法参数, 用于告诉延时任务的延迟时间多长 (如果@Zdelayed设置了fixedDelayedTime, 则无视@DelayTime注解)
  * ---
  * 可用于 java.time.Duration 类型的参数上, 用于表示延迟时长
  * ---
@@ -21,6 +21,7 @@ import java.time.temporal.ChronoUnit;
  * @see java.time.Instant
  * @see java.lang.Number
  * @see java.time.Duration
+ * @see Zdelayed
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)

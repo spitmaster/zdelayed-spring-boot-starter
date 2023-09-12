@@ -1,6 +1,7 @@
 package io.github.spitmaster.zdelayed.aspect;
 
 import io.github.spitmaster.zdelayed.annotation.DelayTime;
+import io.github.spitmaster.zdelayed.annotation.Zdelayed;
 import io.github.spitmaster.zdelayed.exceptions.ZdelayedException;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.core.annotation.AnnotatedElementUtils;
@@ -28,10 +29,16 @@ public class DelayTimeResolver {
     /**
      * 获取该延时任务, 需要延时的时长
      *
+     * @param zdelayed         切点上的 @Zdelayed 注解
      * @param methodInvocation 切点
      * @return 延时时长
      */
-    public Duration getDelayTime(MethodInvocation methodInvocation) {
+    public Duration getDelayTime(Zdelayed zdelayed, MethodInvocation methodInvocation) {
+        long fixedDelayTime = zdelayed.fixedDelayTime();
+        if (fixedDelayTime > 0) {
+            //如果Zdelayed注解设置了固定的延迟时间, 则使用固定的延迟时间, 否则找@DelayTime的时间
+            return Duration.of(fixedDelayTime, zdelayed.timeunit());
+        }
         validateMethod(methodInvocation);
         DelayTimeParameterInfo delayTimeParameterInfo = getDelayTimeParameterInfo(methodInvocation);
         if (delayTimeParameterInfo != null) {
@@ -56,52 +63,38 @@ public class DelayTimeResolver {
     private void validateMethod(MethodInvocation methodInvocation) {
         Method method = methodInvocation.getMethod();
         Parameter[] parameters = method.getParameters();
-        long matchedParameterCount = Arrays.stream(Optional.ofNullable(parameters)
-                        .orElse(new Parameter[]{}))
-                .map(parameter -> AnnotatedElementUtils.findMergedAnnotation(parameter, DelayTime.class))
-                .filter(Objects::nonNull)
-                .count();
+        long matchedParameterCount = Arrays.stream(Optional.ofNullable(parameters).orElse(new Parameter[]{})).map(parameter -> AnnotatedElementUtils.findMergedAnnotation(parameter, DelayTime.class)).filter(Objects::nonNull).count();
         if (matchedParameterCount > 1) {
             //如果有两个以上的参数指定 @DelayTime 注解, 则直接报错
-            String errorMessage = String.format("this method:[%s] more than one parameter has @DelayTime annotation",
-                    method.getName());
+            String errorMessage = String.format("this method:[%s] more than one parameter has @DelayTime annotation", method.getName());
             throw new ZdelayedException(errorMessage);
         }
     }
 
     private DelayTimeParameterInfo getDelayTimeParameterInfo(MethodInvocation methodInvocation) {
-        return DELAY_TIME_PARAMETER_INFO_MAP.computeIfAbsent(
-                methodInvocation.getMethod(),
-                method -> {
-                    DelayTimeParameterInfo delayTimeParameterInfo = null;
-                    Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-                    int paramCount = parameterAnnotations.length;
-                    SCAN:
-                    for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
-                        for (Annotation annotation : parameterAnnotations[paramIndex]) {
-                            if (annotation instanceof DelayTime) {
-                                delayTimeParameterInfo = new DelayTimeParameterInfo();
-                                delayTimeParameterInfo.method = method;
-                                delayTimeParameterInfo.delayTime = (DelayTime) annotation;
-                                delayTimeParameterInfo.paramIndex = paramIndex;
-                                break SCAN;
-                            }
-                        }
+        return DELAY_TIME_PARAMETER_INFO_MAP.computeIfAbsent(methodInvocation.getMethod(), method -> {
+            DelayTimeParameterInfo delayTimeParameterInfo = null;
+            Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+            int paramCount = parameterAnnotations.length;
+            SCAN:
+            for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
+                for (Annotation annotation : parameterAnnotations[paramIndex]) {
+                    if (annotation instanceof DelayTime) {
+                        delayTimeParameterInfo = new DelayTimeParameterInfo();
+                        delayTimeParameterInfo.method = method;
+                        delayTimeParameterInfo.delayTime = (DelayTime) annotation;
+                        delayTimeParameterInfo.paramIndex = paramIndex;
+                        break SCAN;
                     }
-                    return delayTimeParameterInfo;
-                });
+                }
+            }
+            return delayTimeParameterInfo;
+        });
     }
 
     private static class DelayTimeParameterInfo {
         private Method method;
         private DelayTime delayTime;
         private int paramIndex;
-    }
-
-    public static void main(String[] args) {
-        Object[] a = new Object[]{1, 1.2, 3.0f, "2"};
-        System.out.println(a[1]);
-        System.out.println(a[1].getClass()); //这里会变成包装类型
-        System.out.println(a[1].getClass().isPrimitive()); //这里会变成包装类型
     }
 }
