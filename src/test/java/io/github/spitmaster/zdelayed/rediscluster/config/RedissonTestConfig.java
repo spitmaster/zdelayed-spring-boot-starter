@@ -18,15 +18,11 @@ public class RedissonTestConfig {
 
     @Bean
     RedisProperties redisProperties() {
-        System.out.println("----------------------");
-        System.out.println("redisProperties");
         return new RedisProperties();
     }
 
     @Bean
     public RedissonClient redissonClient(RedisProperties redisProperties) {
-        System.out.println("----------------------");
-        System.out.println("redissonClient");
         Config config = new Config();
         //使用json序列化方式
         config.setCodec(new JsonJacksonCodec())
