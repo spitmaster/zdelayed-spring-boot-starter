@@ -86,7 +86,7 @@ public class ZdelayedAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(RedissonClient.class) //没有使用redisson的情况下不加载
-    public RedisClusterDelayTaskScheduler redisClusterDelayTaskExecutor(
+    public RedisClusterDelayTaskScheduler redisClusterDelayTaskScheduler(
             RedissonClient redissonClient) {
         return new RedisClusterDelayTaskScheduler(redissonClient);
     }
