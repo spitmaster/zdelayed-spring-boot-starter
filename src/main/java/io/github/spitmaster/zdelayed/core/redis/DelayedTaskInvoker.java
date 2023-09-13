@@ -41,7 +41,7 @@ class DelayedTaskInvoker {
 
         Class<?> methodClazz = Class.forName(methodClass);
         Object bean = beanFactory.getBean(methodClazz);
-        Class[] parameterClasses = null;
+        Class<?>[] parameterClasses = null;
         Object[] methodArgs = ArrayUtils.EMPTY_OBJECT_ARRAY; //null情况下的默认值
         if (parameterTypes != null) {
             methodArgs = new Object[parameterTypes.length];
