@@ -2,6 +2,7 @@ package io.github.spitmaster.zdelayed.core.redis;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.primitives.Primitives;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.BeanFactory;
 
 import java.lang.reflect.InvocationTargetException;
@@ -41,8 +42,9 @@ class DelayedTaskInvoker {
         Class<?> methodClazz = Class.forName(methodClass);
         Object bean = beanFactory.getBean(methodClazz);
         Class[] parameterClasses = null;
-        Object[] methodArgs = new Object[parameterTypes.length];
+        Object[] methodArgs = ArrayUtils.EMPTY_OBJECT_ARRAY; //null情况下的默认值
         if (parameterTypes != null) {
+            methodArgs = new Object[parameterTypes.length];
             parameterClasses = new Class[parameterTypes.length];
             for (int i = 0; i < parameterTypes.length; i++) {
                 String parameterTypeName = parameterTypes[i];
