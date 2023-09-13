@@ -3,7 +3,6 @@ package io.github.spitmaster.zdelayed.core.redis;
 import com.alibaba.fastjson.JSON;
 import io.github.spitmaster.zdelayed.core.DelayTaskExecutor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.apache.commons.lang3.ArrayUtils;
 import org.redisson.api.RBlockingQueue;
 import org.redisson.api.RDelayedQueue;
 import org.redisson.api.RedissonClient;
@@ -14,7 +13,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -68,7 +66,7 @@ public class RedisClusterDelayTaskScheduler implements DelayTaskExecutor {
             delayedTask.setParameterTypes(parameterTypes);
         }
         //每个参数单独通过fastjson序列化成字符串, redis的queue回调的时候,再通过fastjson还原
-        String[] args = Arrays.stream(Optional.ofNullable(arguments).orElse(ArrayUtils.EMPTY_OBJECT_ARRAY))
+        String[] args = Arrays.stream(arguments)
                 .map(JSON::toJSONString)
                 .toArray(String[]::new);
         delayedTask.setArgs(args);
