@@ -1,6 +1,5 @@
 package io.github.spitmaster.zdelayed.core.redis;
 
-import com.alibaba.fastjson.JSON;
 import com.google.common.primitives.Primitives;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.BeanFactory;
@@ -55,7 +54,7 @@ class DelayedTaskInvoker {
                 //args的类型是json序列化过的数据, 可能与真实的数据不一样, 这里需要处理这些参数, 让类型与方法的参数匹配上
                 parameterClasses[i] = parameterType;
                 //参数要恢复成方法真正调用使用的类型的对象
-                Object methodArg = JSON.parseObject(delayedTask.getArgs()[i], parameterType);
+                Object methodArg = JsonSerializer.parseObject(delayedTask.getArgs()[i], parameterType);
                 methodArgs[i] = methodArg;
             }
         }

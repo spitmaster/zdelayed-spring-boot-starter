@@ -1,6 +1,5 @@
 package io.github.spitmaster.zdelayed.core.redis;
 
-import com.alibaba.fastjson.JSON;
 import io.github.spitmaster.zdelayed.core.DelayTaskExecutor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.redisson.api.RBlockingQueue;
@@ -26,7 +25,6 @@ public class RedisClusterDelayTaskScheduler implements DelayTaskExecutor {
     //延时队列的名字
     static final String ZDELAYED_QUEUE_NAME = "zdelayed:task";
     //使用jackson序列化 DelayedTask 对象
-//    static final TypedJsonJacksonCodec DELAY_TASK_CODEC = new TypedJsonJacksonCodec(DelayedTask.class);
     static final Codec DELAY_TASK_CODEC = new StringCodec();
 
     private final RedissonClient redissonClient;
@@ -67,10 +65,10 @@ public class RedisClusterDelayTaskScheduler implements DelayTaskExecutor {
         }
         //每个参数单独通过fastjson序列化成字符串, redis的queue回调的时候,再通过fastjson还原
         String[] args = Arrays.stream(arguments)
-                .map(JSON::toJSONString)
+                .map(JsonSerializer::toJSONString)
                 .toArray(String[]::new);
         delayedTask.setArgs(args);
-        return JSON.toJSONString(delayedTask);
+        return JsonSerializer.toJSONString(delayedTask);
     }
 
 }
