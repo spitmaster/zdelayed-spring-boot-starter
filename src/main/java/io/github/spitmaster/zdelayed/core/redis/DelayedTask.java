@@ -26,7 +26,7 @@ public class DelayedTask {
     /**
      * 延时方法的参数
      */
-    private Object[] args;
+    private String[] args;
 
     public String getMethodClass() {
         return methodClass;
@@ -52,11 +52,11 @@ public class DelayedTask {
         this.parameterTypes = parameterTypes;
     }
 
-    public Object[] getArgs() {
+    public String[] getArgs() {
         return args;
     }
 
-    public void setArgs(Object[] args) {
+    public void setArgs(String[] args) {
         this.args = args;
     }
 }

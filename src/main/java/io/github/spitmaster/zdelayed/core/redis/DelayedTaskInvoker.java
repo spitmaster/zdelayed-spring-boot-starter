@@ -1,5 +1,6 @@
 package io.github.spitmaster.zdelayed.core.redis;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.primitives.Primitives;
 import org.springframework.beans.factory.BeanFactory;
 
@@ -25,7 +26,7 @@ class DelayedTaskInvoker {
     private Object bean;
 
     /**
-     * 方法调用需要的参数
+     * json序列化后的 方法调用需要的参数
      */
     private Object[] args;
 
@@ -40,6 +41,7 @@ class DelayedTaskInvoker {
         Class<?> methodClazz = Class.forName(methodClass);
         Object bean = beanFactory.getBean(methodClazz);
         Class[] parameterClasses = null;
+        Object[] methodArgs = new Object[parameterTypes.length];
         if (parameterTypes != null) {
             parameterClasses = new Class[parameterTypes.length];
             for (int i = 0; i < parameterTypes.length; i++) {
@@ -48,14 +50,18 @@ class DelayedTaskInvoker {
                 if (parameterType == null) {
                     parameterType = Class.forName(parameterTypeName);
                 }
+                //args的类型是json序列化过的数据, 可能与真实的数据不一样, 这里需要处理这些参数, 让类型与方法的参数匹配上
                 parameterClasses[i] = parameterType;
+                //参数要恢复成方法真正调用使用的类型的对象
+                Object methodArg = JSON.parseObject(delayedTask.getArgs()[i], parameterType);
+                methodArgs[i] = methodArg;
             }
         }
         Method method = methodClazz.getMethod(methodName, parameterClasses);
         DelayedTaskInvoker methodBean = new DelayedTaskInvoker();
         methodBean.method = method;
         methodBean.bean = bean;
-        methodBean.args = delayedTask.getArgs();
+        methodBean.args = methodArgs;
         return methodBean;
     }
 
@@ -73,10 +79,5 @@ class DelayedTaskInvoker {
      */
     void invoke() throws InvocationTargetException, IllegalAccessException {
         method.invoke(bean, args);
-    }
-
-    public static void main(String[] args) {
-//        String a = "long";
-//        PrimitiveIterator
     }
 }
