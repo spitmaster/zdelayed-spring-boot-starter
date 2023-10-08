@@ -1,6 +1,5 @@
 package io.github.spitmaster.zdelayed.rediscluster.core;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Stopwatch;
 import io.github.spitmaster.zdelayed.rediscluster.TestWithRedisApplication;
 import org.junit.jupiter.api.AfterAll;
