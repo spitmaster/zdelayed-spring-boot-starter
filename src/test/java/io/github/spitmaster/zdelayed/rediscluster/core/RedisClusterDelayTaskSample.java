@@ -12,11 +12,11 @@ import java.time.Duration;
 import java.util.concurrent.Future;
 
 @Component
-public class RedisClusterDelayTaskSample {
+class RedisClusterDelayTaskSample {
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisClusterDelayTaskSample.class);
 
     @Zdelayed(taskScope = DelayedTaskScope.REDIS_CLUSTER)
-    public Future<Integer> a() {
+    Future<Integer> a() {
         LOGGER.warn("------------------------------------------------------");
         LOGGER.warn("a");
         LOGGER.warn("------------------------------------------------------");
@@ -24,21 +24,21 @@ public class RedisClusterDelayTaskSample {
     }
 
     @Zdelayed(taskScope = DelayedTaskScope.REDIS_CLUSTER)
-    public void b(@DelayTime Long delayTimeMills) {
+    void b(@DelayTime Long delayTimeMills) {
         LOGGER.warn("------------------------------------------------------");
         LOGGER.warn("b");
         LOGGER.warn("------------------------------------------------------");
     }
 
     @Zdelayed(taskScope = DelayedTaskScope.REDIS_CLUSTER)
-    public void c(@DelayTime long delayTimeMills) {
+    void c(@DelayTime long delayTimeMills) {
         LOGGER.warn("------------------------------------------------------");
         LOGGER.warn("c");
         LOGGER.warn("------------------------------------------------------");
     }
 
     @Zdelayed(taskScope = DelayedTaskScope.REDIS_CLUSTER)
-    public void d(@DelayTime Duration delayTime) {
+    void d(@DelayTime Duration delayTime) {
         LOGGER.warn("------------------------------------------------------");
         LOGGER.warn("d");
         LOGGER.warn("------------------------------------------------------");
@@ -46,7 +46,7 @@ public class RedisClusterDelayTaskSample {
 
     //由于设置了fixedDelayTime, 所以直接无视 @DelayTime
     @Zdelayed(taskScope = DelayedTaskScope.REDIS_CLUSTER, fixedDelayTime = 3)
-    public void e(@DelayTime Duration delayTime) {
+    void e(@DelayTime Duration delayTime) {
         LOGGER.warn("------------------------------------------------------");
         LOGGER.warn("e");
         LOGGER.warn("------------------------------------------------------");

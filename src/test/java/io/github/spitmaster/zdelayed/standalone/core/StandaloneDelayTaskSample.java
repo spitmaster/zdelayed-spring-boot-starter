@@ -10,35 +10,35 @@ import java.time.Duration;
 import java.util.concurrent.Future;
 
 @Component
-public class StandaloneDelayTaskSample {
+class StandaloneDelayTaskSample {
 
     @Zdelayed(taskScope = DelayedTaskScope.STANDALONE)
-    public Future<Integer> a() {
+    Future<Integer> a() {
         System.out.println("a");
         return AsyncResult.forValue(0);
     }
 
     @Zdelayed(taskScope = DelayedTaskScope.STANDALONE)
-    public Future<Integer> b(@DelayTime Long delayTimeMills) {
+    Future<Integer> b(@DelayTime Long delayTimeMills) {
         System.out.println("b");
         return AsyncResult.forValue(0);
     }
 
     @Zdelayed(taskScope = DelayedTaskScope.STANDALONE)
-    public Future<Integer> c(@DelayTime long delayTimeMills) {
+    Future<Integer> c(@DelayTime long delayTimeMills) {
         System.out.println("c");
         return AsyncResult.forValue(0);
     }
 
     @Zdelayed(taskScope = DelayedTaskScope.STANDALONE)
-    public Future<Integer> d(@DelayTime Duration delayTime) {
+    Future<Integer> d(@DelayTime Duration delayTime) {
         System.out.println("d");
         return AsyncResult.forValue(0);
     }
 
     //由于设置了fixedDelayTime, 所以直接无视 @DelayTime
     @Zdelayed(fixedDelayTime = 3)
-    public Future<Integer> e(@DelayTime Duration delayTime) {
+    Future<Integer> e(@DelayTime Duration delayTime) {
         System.out.println("e");
         return AsyncResult.forValue(0);
     }

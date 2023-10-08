@@ -23,7 +23,7 @@ class StandaloneDelayTaskExecutorTest {
 
     //等待执行结果
     @Test
-    public void a1() throws ExecutionException, InterruptedException {
+    void a1() throws ExecutionException, InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStarted();
         Future<Integer> a = standaloneDelayTaskSample.a(); //假设代码执行花费50ms以内
         a.get();
@@ -35,7 +35,7 @@ class StandaloneDelayTaskExecutorTest {
 
     //不等待执行结果
     @Test
-    public void a2() {
+    void a2() {
         Stopwatch stopwatch = Stopwatch.createStarted();
         standaloneDelayTaskSample.a();
         Duration elapsed = stopwatch.elapsed();
@@ -46,7 +46,7 @@ class StandaloneDelayTaskExecutorTest {
 
     //等待执行结果
     @Test
-    public void b1() throws ExecutionException, InterruptedException {
+    void b1() throws ExecutionException, InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStarted();
         Future<Integer> b = standaloneDelayTaskSample.b(2000L);
         b.get();
@@ -58,7 +58,7 @@ class StandaloneDelayTaskExecutorTest {
 
     //不等待执行结果
     @Test
-    public void b2() {
+    void b2() {
         Stopwatch stopwatch = Stopwatch.createStarted();
         standaloneDelayTaskSample.b(2000L);
         Duration elapsed = stopwatch.elapsed();
@@ -69,7 +69,7 @@ class StandaloneDelayTaskExecutorTest {
 
     //等待执行结果
     @Test
-    public void c1() throws ExecutionException, InterruptedException {
+    void c1() throws ExecutionException, InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStarted();
         Future<Integer> c = standaloneDelayTaskSample.c(2000L);
         c.get();
@@ -81,7 +81,7 @@ class StandaloneDelayTaskExecutorTest {
 
     //不等待执行结果
     @Test
-    public void c2() throws ExecutionException, InterruptedException {
+    void c2() throws ExecutionException, InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStarted();
         standaloneDelayTaskSample.c(2000L);
         Duration elapsed = stopwatch.elapsed();
@@ -92,7 +92,7 @@ class StandaloneDelayTaskExecutorTest {
 
     //等待执行结果
     @Test
-    public void d1() throws ExecutionException, InterruptedException {
+    void d1() throws ExecutionException, InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStarted();
         Future<Integer> d = standaloneDelayTaskSample.d(Duration.ofMillis(2000));
         d.get();
@@ -105,7 +105,7 @@ class StandaloneDelayTaskExecutorTest {
 
     //不等待执行结果
     @Test
-    public void d2() {
+    void d2() {
         Stopwatch stopwatch = Stopwatch.createStarted();
         standaloneDelayTaskSample.d(Duration.ofMillis(2000));
         Duration elapsed = stopwatch.elapsed();
@@ -117,7 +117,7 @@ class StandaloneDelayTaskExecutorTest {
 
     //等待执行结果
     @Test
-    public void e1() throws ExecutionException, InterruptedException {
+    void e1() throws ExecutionException, InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStarted();
         Future<Integer> d = standaloneDelayTaskSample.e(Duration.ofSeconds(2000));
         d.get();
@@ -130,7 +130,7 @@ class StandaloneDelayTaskExecutorTest {
 
     //不等待执行结果
     @Test
-    public void e2() {
+    void e2() {
         Stopwatch stopwatch = Stopwatch.createStarted();
         standaloneDelayTaskSample.e(Duration.ofSeconds(2000));
         Duration elapsed = stopwatch.elapsed();

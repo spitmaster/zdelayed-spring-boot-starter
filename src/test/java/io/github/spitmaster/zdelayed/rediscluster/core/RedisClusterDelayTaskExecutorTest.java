@@ -25,7 +25,7 @@ class RedisClusterDelayTaskExecutorTest {
 
     //等待执行结果
     @Test
-    public void a1() throws ExecutionException, InterruptedException {
+    void a1() throws ExecutionException, InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStarted();
         Future<Integer> a = redisClusterDelayTaskSample.a(); //假设代码执行花费50ms以内
         a.get();
@@ -37,7 +37,7 @@ class RedisClusterDelayTaskExecutorTest {
 
     //不等待执行结果
     @Test
-    public void a2() {
+    void a2() {
         Stopwatch stopwatch = Stopwatch.createStarted();
         redisClusterDelayTaskSample.a();
         Duration elapsed = stopwatch.elapsed();
@@ -49,7 +49,7 @@ class RedisClusterDelayTaskExecutorTest {
 
     //不等待执行结果
     @Test
-    public void b2() {
+    void b2() {
         Stopwatch stopwatch = Stopwatch.createStarted();
         redisClusterDelayTaskSample.b(2000L);
         Duration elapsed = stopwatch.elapsed();
@@ -61,7 +61,7 @@ class RedisClusterDelayTaskExecutorTest {
 
     //不等待执行结果
     @Test
-    public void c2() throws ExecutionException, InterruptedException {
+    void c2() throws ExecutionException, InterruptedException {
         Stopwatch stopwatch = Stopwatch.createStarted();
         redisClusterDelayTaskSample.c(2000L);
         Duration elapsed = stopwatch.elapsed();
@@ -71,10 +71,9 @@ class RedisClusterDelayTaskExecutorTest {
     }
 
 
-
     //不等待执行结果
     @Test
-    public void d2() {
+    void d2() {
         Stopwatch stopwatch = Stopwatch.createStarted();
         redisClusterDelayTaskSample.d(Duration.ofMillis(2000));
         Duration elapsed = stopwatch.elapsed();
@@ -84,10 +83,9 @@ class RedisClusterDelayTaskExecutorTest {
     }
 
 
-
     //不等待执行结果
     @Test
-    public void e2() {
+    void e2() {
         Stopwatch stopwatch = Stopwatch.createStarted();
         redisClusterDelayTaskSample.e(Duration.ofSeconds(2000));
         Duration elapsed = stopwatch.elapsed();
@@ -97,7 +95,7 @@ class RedisClusterDelayTaskExecutorTest {
     }
 
     @AfterAll
-    public static void waitForDelayedTask() throws InterruptedException {
+    static void waitForDelayedTask() throws InterruptedException {
         TimeUnit.SECONDS.sleep(10);
     }
 }
