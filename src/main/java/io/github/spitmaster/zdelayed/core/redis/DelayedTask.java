@@ -1,5 +1,8 @@
 package io.github.spitmaster.zdelayed.core.redis;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 /**
  * 延迟任务的信息
  * methodClass + methodName + parameterTypes 可以确定唯一的方法
@@ -58,5 +61,10 @@ public class DelayedTask {
 
     public void setArgs(String[] args) {
         this.args = args;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.JSON_STYLE);
     }
 }
