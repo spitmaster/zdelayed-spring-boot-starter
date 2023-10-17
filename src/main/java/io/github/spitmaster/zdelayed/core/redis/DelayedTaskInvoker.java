@@ -3,8 +3,8 @@ package io.github.spitmaster.zdelayed.core.redis;
 import com.google.common.primitives.Primitives;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.util.ReflectionUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -58,7 +58,7 @@ class DelayedTaskInvoker {
                 methodArgs[i] = methodArg;
             }
         }
-        Method method = methodClazz.getMethod(methodName, parameterClasses);
+        Method method = ReflectionUtils.findMethod(methodClazz, methodName, parameterClasses);
         DelayedTaskInvoker methodBean = new DelayedTaskInvoker();
         methodBean.method = method;
         methodBean.bean = bean;
@@ -78,7 +78,10 @@ class DelayedTaskInvoker {
     /**
      * 调用业务方法
      */
-    void invoke() throws InvocationTargetException, IllegalAccessException {
-        method.invoke(bean, args);
+    void invoke() {
+        if (!method.isAccessible()) {
+            method.setAccessible(true);
+        }
+        ReflectionUtils.invokeMethod(method, bean, args);
     }
 }
