@@ -36,7 +36,7 @@ public class DelayTimeResolver {
     public Duration getDelayTime(Zdelayed zdelayed, MethodInvocation methodInvocation) {
         long fixedDelayTime = zdelayed.fixedDelayTime();
         if (fixedDelayTime > 0) {
-            //如果Zdelayed注解设置了固定的延迟时间, 则使用固定的延迟时间, 否则找@DelayTime的时间
+            //如果Zdelayed注解设置了固定的延迟时间, 则使用固定的延迟时间, 否则使用@DelayTime标记的时间参数
             return Duration.of(fixedDelayTime, zdelayed.timeunit());
         }
         validateMethod(methodInvocation);
@@ -44,16 +44,15 @@ public class DelayTimeResolver {
         if (delayTimeParameterInfo != null) {
             Object[] args = methodInvocation.getArguments();
             int paramIndex = delayTimeParameterInfo.paramIndex;
-            DelayTime delayTime = delayTimeParameterInfo.delayTime;
             Object delayTimeArg = args[paramIndex];
             Class<?> delayTimeArgClass = delayTimeArg.getClass();
             if (delayTimeArg instanceof Duration) {
                 return (Duration) delayTimeArg;
             } else if (delayTimeArg instanceof Number) {
-                return Duration.of(((Number) delayTimeArg).longValue(), delayTime.timeunit());
+                return Duration.of(((Number) delayTimeArg).longValue(), zdelayed.timeunit());
             } else if (delayTimeArgClass.isPrimitive()) {
                 //基础类型, 可能走不到这里, 基础类型可能会被转成包装类型
-                return Duration.of((long) delayTimeArg, delayTime.timeunit());
+                return Duration.of((long) delayTimeArg, zdelayed.timeunit());
             }
         }
         return null;
@@ -73,28 +72,22 @@ public class DelayTimeResolver {
 
     private DelayTimeParameterInfo getDelayTimeParameterInfo(MethodInvocation methodInvocation) {
         return DELAY_TIME_PARAMETER_INFO_MAP.computeIfAbsent(methodInvocation.getMethod(), method -> {
-            DelayTimeParameterInfo delayTimeParameterInfo = null;
             Annotation[][] parameterAnnotations = method.getParameterAnnotations();
             int paramCount = parameterAnnotations.length;
-            SCAN:
             for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
                 for (Annotation annotation : parameterAnnotations[paramIndex]) {
                     if (annotation instanceof DelayTime) {
-                        delayTimeParameterInfo = new DelayTimeParameterInfo();
-                        delayTimeParameterInfo.method = method;
-                        delayTimeParameterInfo.delayTime = (DelayTime) annotation;
+                        DelayTimeParameterInfo delayTimeParameterInfo = new DelayTimeParameterInfo();
                         delayTimeParameterInfo.paramIndex = paramIndex;
-                        break SCAN;
+                        return delayTimeParameterInfo;
                     }
                 }
             }
-            return delayTimeParameterInfo;
+            return null;
         });
     }
 
     private static class DelayTimeParameterInfo {
-        private Method method;
-        private DelayTime delayTime;
         private int paramIndex;
     }
 }

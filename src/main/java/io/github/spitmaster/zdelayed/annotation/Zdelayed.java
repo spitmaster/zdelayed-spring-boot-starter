@@ -38,7 +38,7 @@ public @interface Zdelayed {
     long fixedDelayTime() default 0;
 
     /**
-     * fixedDelayTime 使用的时间单位
+     * 延迟时间使用的时间单位
      */
     ChronoUnit timeunit() default ChronoUnit.SECONDS;
 }
