@@ -28,7 +28,7 @@ class StandaloneDelayTaskExecutorTest {
         Future<Integer> a = standaloneDelayTaskSample.a(); //假设代码执行花费50ms以内
         a.get();
         Duration elapsed = stopwatch.elapsed();
-        LOGGER.info("a elapsed={}", elapsed);
+        LOGGER.info("a1 elapsed={}", elapsed);
         Assertions.assertTrue(elapsed.toMillis() < 50);
         Assertions.assertTrue(elapsed.toMillis() >= 0);
     }
@@ -39,7 +39,7 @@ class StandaloneDelayTaskExecutorTest {
         Stopwatch stopwatch = Stopwatch.createStarted();
         standaloneDelayTaskSample.a();
         Duration elapsed = stopwatch.elapsed();
-        LOGGER.info("a elapsed={}", elapsed);
+        LOGGER.info("a2 elapsed={}", elapsed);
         Assertions.assertTrue(elapsed.toMillis() < 5);
         Assertions.assertTrue(elapsed.toMillis() >= 0);
     }
@@ -51,7 +51,7 @@ class StandaloneDelayTaskExecutorTest {
         Future<Integer> b = standaloneDelayTaskSample.b(2000L);
         b.get();
         Duration elapsed = stopwatch.elapsed();
-        LOGGER.info("b elapsed={}", elapsed);
+        LOGGER.info("b1 elapsed={}", elapsed);
         Assertions.assertTrue(elapsed.toMillis() < 2050);
         Assertions.assertTrue(elapsed.toMillis() >= 2000);
     }
@@ -62,7 +62,7 @@ class StandaloneDelayTaskExecutorTest {
         Stopwatch stopwatch = Stopwatch.createStarted();
         standaloneDelayTaskSample.b(2000L);
         Duration elapsed = stopwatch.elapsed();
-        LOGGER.info("b elapsed={}", elapsed);
+        LOGGER.info("b2 elapsed={}", elapsed);
         Assertions.assertTrue(elapsed.toMillis() < 50);
         Assertions.assertTrue(elapsed.toMillis() >= 0);
     }
@@ -74,7 +74,7 @@ class StandaloneDelayTaskExecutorTest {
         Future<Integer> c = standaloneDelayTaskSample.c(2000L);
         c.get();
         Duration elapsed = stopwatch.elapsed();
-        LOGGER.info("c elapsed={}", elapsed);
+        LOGGER.info("c1 elapsed={}", elapsed);
         Assertions.assertTrue(elapsed.toMillis() < 2050);
         Assertions.assertTrue(elapsed.toMillis() >= 2000);
     }
@@ -85,7 +85,7 @@ class StandaloneDelayTaskExecutorTest {
         Stopwatch stopwatch = Stopwatch.createStarted();
         standaloneDelayTaskSample.c(2000L);
         Duration elapsed = stopwatch.elapsed();
-        LOGGER.info("c elapsed={}", elapsed);
+        LOGGER.info("c2 elapsed={}", elapsed);
         Assertions.assertTrue(elapsed.toMillis() < 50);
         Assertions.assertTrue(elapsed.toMillis() >= 0);
     }
@@ -97,7 +97,7 @@ class StandaloneDelayTaskExecutorTest {
         Future<Integer> d = standaloneDelayTaskSample.d(Duration.ofMillis(2000));
         d.get();
         Duration elapsed = stopwatch.elapsed();
-        LOGGER.info("d elapsed={}", elapsed);
+        LOGGER.info("d1 elapsed={}", elapsed);
         Assertions.assertTrue(elapsed.toMillis() < 2050);
         Assertions.assertTrue(elapsed.toMillis() >= 2000);
     }
@@ -109,7 +109,7 @@ class StandaloneDelayTaskExecutorTest {
         Stopwatch stopwatch = Stopwatch.createStarted();
         standaloneDelayTaskSample.d(Duration.ofMillis(2000));
         Duration elapsed = stopwatch.elapsed();
-        LOGGER.info("d elapsed={}", elapsed);
+        LOGGER.info("d2 elapsed={}", elapsed);
         Assertions.assertTrue(elapsed.toMillis() < 50);
         Assertions.assertTrue(elapsed.toMillis() >= 0);
     }
@@ -122,7 +122,7 @@ class StandaloneDelayTaskExecutorTest {
         Future<Integer> d = standaloneDelayTaskSample.e(Duration.ofSeconds(2000));
         d.get();
         Duration elapsed = stopwatch.elapsed();
-        LOGGER.info("e elapsed={}", elapsed);
+        LOGGER.info("e1 elapsed={}", elapsed);
         Assertions.assertTrue(elapsed.toMillis() < 3050);
         Assertions.assertTrue(elapsed.toMillis() >= 3000);
     }
@@ -134,7 +134,7 @@ class StandaloneDelayTaskExecutorTest {
         Stopwatch stopwatch = Stopwatch.createStarted();
         standaloneDelayTaskSample.e(Duration.ofSeconds(2000));
         Duration elapsed = stopwatch.elapsed();
-        LOGGER.info("e elapsed={}", elapsed);
+        LOGGER.info("e2 elapsed={}", elapsed);
         Assertions.assertTrue(elapsed.toMillis() < 50);
         Assertions.assertTrue(elapsed.toMillis() >= 0);
     }

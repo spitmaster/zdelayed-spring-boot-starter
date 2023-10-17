@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.Future;
 
 @Component
@@ -18,19 +19,19 @@ class StandaloneDelayTaskSample {
         return AsyncResult.forValue(0);
     }
 
-    @Zdelayed(taskScope = DelayedTaskScope.STANDALONE)
+    @Zdelayed(taskScope = DelayedTaskScope.STANDALONE, timeunit = ChronoUnit.MILLIS)
     Future<Integer> b(@DelayTime Long delayTimeMills) {
         System.out.println("b");
         return AsyncResult.forValue(0);
     }
 
-    @Zdelayed(taskScope = DelayedTaskScope.STANDALONE)
+    @Zdelayed(taskScope = DelayedTaskScope.STANDALONE, timeunit = ChronoUnit.MILLIS)
     Future<Integer> c(@DelayTime long delayTimeMills) {
         System.out.println("c");
         return AsyncResult.forValue(0);
     }
 
-    @Zdelayed(taskScope = DelayedTaskScope.STANDALONE)
+    @Zdelayed(taskScope = DelayedTaskScope.STANDALONE, timeunit = ChronoUnit.MILLIS)
     Future<Integer> d(@DelayTime Duration delayTime) {
         System.out.println("d");
         return AsyncResult.forValue(0);
