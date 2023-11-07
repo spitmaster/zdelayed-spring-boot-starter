@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  io.github.spitmaster.zdelayed.config.ZdelayedAutoConfiguration
+  io.github.spitmaster.zdelayed.config.ZdelayedAutoConfiguration,\
+  io.github.spitmaster.zdelayed.config.ZdelayedRedisAutoConfiguration
