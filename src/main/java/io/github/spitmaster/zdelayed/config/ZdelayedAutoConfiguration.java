@@ -12,6 +12,7 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -86,6 +87,7 @@ public class ZdelayedAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(RedissonClient.class) //没有使用redisson的情况下不加载
+    @ConditionalOnClass(RedissonClient.class)
     public RedisClusterDelayTaskScheduler redisClusterDelayTaskScheduler(
             RedissonClient redissonClient) {
         return new RedisClusterDelayTaskScheduler(redissonClient);
@@ -93,6 +95,7 @@ public class ZdelayedAutoConfiguration {
 
     @Bean
     @ConditionalOnBean(RedissonClient.class) //没有使用redisson的情况下不加载
+    @ConditionalOnClass(RedissonClient.class)
     public RedisClusterDelayTaskExecutor redisClusterDelayTaskExecutor(
             RedissonClient redissonClient,
             @Qualifier(ZDELAYED_CLUSTER_EXECUTOR) ExecutorService zdelayedExecutor
