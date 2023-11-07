@@ -19,20 +19,20 @@ import java.util.concurrent.ExecutorService;
  */
 @Configuration(proxyBeanMethods = false)
 @ConditionalOnProperty(name = "zdelayed.enabled", matchIfMissing = true)
-@ConditionalOnClass(name = "org.redisson.api.RedissonClient")
+@ConditionalOnClass(RedissonClient.class)
 public class ZdelayedRedisAutoConfiguration {
 
     @Bean
-    @ConditionalOnBean(type = "org.redisson.api.RedissonClient") //没有使用redisson的情况下不加载
-    @ConditionalOnClass(name = "org.redisson.api.RedissonClient")
+    @ConditionalOnBean(RedissonClient.class) //没有使用redisson的情况下不加载
+    @ConditionalOnClass(RedissonClient.class)
     public RedisClusterDelayTaskScheduler redisClusterDelayTaskScheduler(
             RedissonClient redissonClient) {
         return new RedisClusterDelayTaskScheduler(redissonClient);
     }
 
     @Bean
-    @ConditionalOnBean(type = "org.redisson.api.RedissonClient") //没有使用redisson的情况下不加载
-    @ConditionalOnClass(name = "org.redisson.api.RedissonClient")
+    @ConditionalOnBean(RedissonClient.class) //没有使用redisson的情况下不加载
+    @ConditionalOnClass(RedissonClient.class)
     public RedisClusterDelayTaskExecutor redisClusterDelayTaskExecutor(
             RedissonClient redissonClient,
             @Qualifier(ZdelayedAutoConfiguration.ZDELAYED_CLUSTER_EXECUTOR) ExecutorService zdelayedExecutor
